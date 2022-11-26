@@ -33,3 +33,37 @@
 <li>byType: é considerado o tipo da classe para inclusão do Bean.</li>
 <li>byConstructor: usamos o construtor para incluir a dependência.</li>
 
+<h1>Aula 2 - Projeto Springboot</h1>
+
+<h2>Conhecendo o Spring Boot</h2>
+<p>Enquanto o Spring Framework é baseado no padrão de injeção de dependências, o Springboot foca na produtividade e configuração automática.</p>
+<p>Antes do SpringBoot tinhamos desafios com a configuração do projeto: Dependência individual, Verbosidade, Incompatibilidade de versões, Complexidade de gestão, Configurações complexas e repetitivas.</p>
+<p>Dado que a maior parte das configurações necessárias para o inicio do projeto são mesmas, por que não iniciar um projeto com todas estas configurações ja definidas?</p>
+<p>Essas configurações são definidas através dos Starters: que são descritores de dependências.</p>
+<p>O uso desses startes traz alguns benefícios:
+<li>Coesão</li>
+<li>Versões compatíveis</li>
+<li>Otimização do tempo</li>
+<li>Configuração simples</li>
+<li>Foco no negócio</li>
+</p>
+<p>Starters mais utilizados: Spring-boot-starter-*
+<li>data-jpa: integração ao bando de dados via JPA - Hibernate</li>
+<li>data-mongodb: integração com banco de dados MongoDB</li>
+<li>web: inclusão do container Tomcat para aplicações REST</li>
+<li>web-services: webservices baseados na arquitetura SOAP</li>
+<li>batch: implementação de JOBs de processos</li>
+<li>test: disponibilização de recursos para testes unitários como JUnit</li>
+<li>openfeign: é Client HTTP baseado em interfaces</li>
+<li>actuator: gerenciamento de monitoramento da aplicação</li>
+</p>
+
+<h2>Primeiros Passos</h2>
+<h2>Beans vs Components</h2>
+<h2>Scopes - Singleton ou Prototype</h2>
+<h2>Properties Values</h2>
+<h2>Configuration Properties</h2>
+<h2>Conceito ORM e JPA</h2>
+<h2>Spring Data JPA</h2>
+<h2>Conexão com Postgres</h2>
+<h2>JPA Repository</h2>
