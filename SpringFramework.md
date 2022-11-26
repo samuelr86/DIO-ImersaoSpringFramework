@@ -59,6 +59,137 @@
 </p>
 
 <h2>Primeiros Passos</h2>
+
+<h3>Criar um projeto com initializr</h3>
+<p>Acessar start.spring.io e preencher as caracteristicas do projeto:
+<li>Project: Maven</li>
+<li> Language: Java</li>
+<li>Springboot: 3.0.0 (não snapshot)</li>
+<li>Group: dio</li>
+<li>Artifact: primeiros-passos</li>
+<li>Name: primeiros-passos </li>
+<li>Description: Primeiros passos com Spring Boot</li>
+<li>Package name: dio.springboot</li>
+<li>Encapotamento: Tipo JAR</li>
+<li>Versão Java: Java17</li>
+<li>
+	Dependências:
+	<li>...</li>
+</li>
+
+Após clicar em generate.</p>
+<h3>Importando o projeto Maven</h3>
+<p>Vai ser baixado no computador uma pasta zipada com o projeto gerado, extrair o conteúdo para a pasta do seu projeto e pronto: um projeto estruturado com Maven e Springboot estará disponivel para trabalhar.</p>
+
+<h3>Conhecendo a estrutura Springboot</h3>
+
+<p>Inicialmente as pastas mais importante dentro do projeto seram a <em>src</em> que contém o container do projeto Springboot, além da pasta <em>test</em> que já possui estrutura para a realização de testes. Temos também um arquivo chamado <em>pom.xml</em> que contém informações do projeto para distribuição inclusão de dependências e outras configurações importantes para o gerenciamento do projeto.</p>
+<p>Outro arquivo importante é o <em>application.properties</em> em que todas as configuraçoes e propriedades estarão centralizadas nesse arquivo, sejam interações do banco de dados, portas de servidor (se for trabalhar com web), configuração da aplicação como e-mail da aplicação, configuração de dados de acesso FTP entre outros </p>
+
+<h3>Bean e CommandLineRunner</h3>
+<p>Vamos criar uma classe chamada <em>Calculadora.java</em> que terá um unico método somar...
+
+```java
+public class Calculadora{
+	public int somar(int numero1, int numero2){
+		return numero1 + numero2;
+	}
+}
+```
+
+...mas não podemos chamar esse objeto, pois não estão disponíveis dentro do contexto SpringBoot...
+
+```java
+@SpringBootApplication
+public class PrimeirosPassosApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(PrimeirosPassosApplication.class, args);
+	}
+
+}
+```
+
+...conforme as convenções de inversão de controle e injeção de dependência. A partir de agora não vamos mais estar realizando o new de nosso objetos e isso será um aspecto de configuração de Beans e Comandos de Inicialização da nossa aplicação. Existe algumas maneira de realizar essa inicialização, uma delas é através do <em>CommandLineRunner</em>, que é um comando disponível pelo SpringBoot para inicializar a aplicação e realizar um comando com os objetos que agora seram disponibilizados pelo container.</p>
+<p>Primeiro vamos criar uma classe "MyApp.java" e assinar um contrato com a interface "CommandLineRunner" e implementar o método da interface disponível("run").</p>
+
+```java
+public class MyApp implements CommandLineRunner{
+
+	@Override
+	public void run(String... args) throws Exception{
+
+	}
+}
+```
+<p>Depois vamos determinar os objetos que seram os componentes (MyApp e Calculadora) serão anotados com a @Component, ... </p>
+
+```java
+@Component
+public class MyApp implements CommandLineRunner{}
+```
+
+```java
+@Component
+public class Calculadora{}
+```
+<p>... instanciar a calculadora dentro do MyApp...</p>
+
+```java
+public class MyApp implements CommandLineRunner{
+
+	private Calculadora calculadora;
+
+	@Override
+	public void run(String... args) throws Exception{
+
+	}
+}
+```
+
+<p>... dentro do método run executamos o método somar de calculadora...</p>
+
+```java
+
+	@Override
+	public void run(String... args) throws Exception{
+		System.out.println("O Resultado é "+ calculadora.somar(2, 7));	
+	}
+```
+<p>Mas para executar sem erros precisamos instanciar a calculadora sem usar o new, e para isso usamos a annotation '@Autowired'...
+
+```java
+@Component
+public class MyApp implements CommandLineRunner{
+
+	@Autowired
+	private Calculadora calculadora;
+
+	@Override
+	public void run(String... args) throws Exception{
+		System.out.println("O Resultado é " + calculadora.somar(2, 7));
+	}
+}
+```
+... mostrando o resultado no terminal embutido na IDE...
+
+```bash
+PS C:\bootcamp_ifood\SpringFramework\DIO-ImersaoSpringFramework>  & 'C:\Users\samue\.vscode\extensions\redhat.java-1.12.0-win32-x64\jre\17.0.4.1-win32-x86_64\bin\java.exe' '-XX:+ShowCodeDetailsInExceptionMessages' '@C:\Users\samue\AppData\Local\Temp\cp_940c1p221etjjp2plcaa8c776.argfile' 'dio.edu.springboot.PrimeirosPassosApplication' 
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.0.0)
+
+2022-11-26T18:33:39.500-03:00  INFO 14396 --- [           main] d.e.s.PrimeirosPassosApplication         : Starting PrimeirosPassosApplication using Java 17.0.4.1 with PID 14396 (C:\bootcamp_ifood\SpringFramework\DIO-ImersaoSpringFramework\primeiros-passos\target\classes started by samue in C:\bootcamp_ifood\SpringFramework\DIO-ImersaoSpringFramework)
+2022-11-26T18:33:39.505-03:00  INFO 14396 --- [           main] d.e.s.PrimeirosPassosApplication         : No active profile set, falling back to 1 default profile: "default"
+2022-11-26T18:33:40.313-03:00  INFO 14396 --- [           main] d.e.s.PrimeirosPassosApplication         : Started PrimeirosPassosApplication in 1.424 seconds (process running for 2.065)
+O resultado é 9
+```
+</p>
 <h2>Beans vs Components</h2>
 <h2>Scopes - Singleton ou Prototype</h2>
 <h2>Properties Values</h2>
