@@ -63,18 +63,18 @@
 <h3>Criar um projeto com initializr</h3>
 <p>Acessar start.spring.io e preencher as caracteristicas do projeto:
 <li>Project: Maven</li>
-<li> Language: Java</li>
+<li>Language: Java</li>
 <li>Springboot: 3.0.0 (não snapshot)</li>
-<li>Group: dio</li>
+<li>GroupId(organização): dio</li>
 <li>Artifact: primeiros-passos</li>
 <li>Name: primeiros-passos </li>
 <li>Description: Primeiros passos com Spring Boot</li>
-<li>Package name: dio.springboot</li>
+<li>Package name(pacote raiz): dio.springboot</li>
 <li>Encapotamento: Tipo JAR</li>
 <li>Versão Java: Java17</li>
 <li>
 	Dependências:
-	<li>...</li>
+	<li>são caracteristica que serão adicionadas na aplicação</li>
 </li>
 
 Após clicar em generate.</p>
@@ -83,7 +83,7 @@ Após clicar em generate.</p>
 
 <h3>Conhecendo a estrutura Springboot</h3>
 
-<p>Inicialmente as pastas mais importante dentro do projeto seram a <em>src</em> que contém o container do projeto Springboot, além da pasta <em>test</em> que já possui estrutura para a realização de testes. Temos também um arquivo chamado <em>pom.xml</em> que contém informações do projeto para distribuição inclusão de dependências e outras configurações importantes para o gerenciamento do projeto.</p>
+<p>Inicialmente as pastas mais importante dentro do projeto seram a <em>src</em> que contém o container do projeto Springboot, além da pasta <em>test</em> que já possui estrutura para a realização de suas implementações baseadas em TDD, se for de preferências. Temos também um arquivo chamado <em>pom.xml</em> que contém informações do projeto para distribuição inclusão de dependências e outras configurações importantes para o gerenciamento do projeto.</p>
 <p>Outro arquivo importante é o <em>application.properties</em> em que todas as configuraçoes e propriedades estarão centralizadas nesse arquivo, sejam interações do banco de dados, portas de servidor (se for trabalhar com web), configuração da aplicação como e-mail da aplicação, configuração de dados de acesso FTP entre outros </p>
 
 <h3>Bean e CommandLineRunner</h3>
@@ -97,7 +97,7 @@ public class Calculadora{
 }
 ```
 
-...mas não podemos chamar esse objeto, pois não estão disponíveis dentro do contexto SpringBoot...
+...mas não podemos chamar esse objeto dentro da classe principal da aplicação, pois não estão disponíveis dentro do contexto SpringBoot...
 
 ```java
 @SpringBootApplication
@@ -110,8 +110,9 @@ public class PrimeirosPassosApplication {
 }
 ```
 
-...conforme as convenções de inversão de controle e injeção de dependência. A partir de agora não vamos mais estar realizando o new de nosso objetos e isso será um aspecto de configuração de Beans e Comandos de Inicialização da nossa aplicação. Existe algumas maneira de realizar essa inicialização, uma delas é através do <em>CommandLineRunner</em>, que é um comando disponível pelo SpringBoot para inicializar a aplicação e realizar um comando com os objetos que agora seram disponibilizados pelo container.</p>
-<p>Primeiro vamos criar uma classe "MyApp.java" e assinar um contrato com a interface "CommandLineRunner" e implementar o método da interface disponível("run").</p>
+...conforme as convenções de inversão de controle e injeção de dependência. A partir de agora não vamos mais estar realizando o <b>new</b> de nosso objetos e isso será um aspecto de configuração de Beans e Comandos de Inicialização da nossa aplicação. Existem algumas maneiras de realizar essa iteração, uma delas é através do <em>CommandLineRunner</em>, que é um comando disponível pelo SpringBoot através de uma interface para inicializar a aplicação e realizar um comando com os objetos que agora serão disponibilizados pelo container.</p>
+
+<p>Primeiro vamos criar uma classe "MyApp.java" e quero que ela tenha uma ação muito semelhante ao método Main(), para isso implementa a interface "CommandLineRunner" e sobrescreve o método da interface("run").</p>
 
 ```java
 public class MyApp implements CommandLineRunner{
@@ -122,7 +123,7 @@ public class MyApp implements CommandLineRunner{
 	}
 }
 ```
-<p>Depois vamos determinar os objetos que seram os componentes (MyApp e Calculadora) serão anotados com a @Component, ... </p>
+<p>Depois vamos determinar os objetos que seram os Beans da aplicação e fazemos uma annotation '@Component' para identificar que as classes serão componentes da aplicação... </p>
 
 ```java
 @Component
@@ -133,7 +134,7 @@ public class MyApp implements CommandLineRunner{}
 @Component
 public class Calculadora{}
 ```
-<p>... instanciar a calculadora dentro do MyApp...</p>
+<p>... como precisamos instanciar a calculadora dentro do MyApp fazemos a injeção do componente Calculadora...</p>
 
 ```java
 public class MyApp implements CommandLineRunner{
@@ -147,7 +148,7 @@ public class MyApp implements CommandLineRunner{
 }
 ```
 
-<p>... dentro do método run executamos o método somar de calculadora...</p>
+<p>... e dentro do método run executamos o método somar de Calculadora...</p>
 
 ```java
 
@@ -190,7 +191,46 @@ PS C:\bootcamp_ifood\SpringFramework\DIO-ImersaoSpringFramework>  & 'C:\Users\sa
 O resultado é 9
 ```
 </p>
+
+
 <h2>Beans vs Components</h2>
+
+<li>Quando usar @Bean?</li>
+<li>Quando usar @Component?</li>
+
+<p><b>Component</b>: quando tenho acesso ao código fonte. quando digo que ele é um componente posso injetá-lo em qualquer ecossitema de um container do Springboot.</p>
+<p><b>Bean</b>: quando é um arquivo de uma biblioteca externa não temos acesso ao código fonte mas eu quer inicializar a construção de um Bean através da estrutura dessa implementação, então anotamos com um '@Bean'.</p>
+<p>Caso necessite criar um Bean de um arquivo que não temos acesso ao código podemos declará-lo de duas formas:
+<li>1ªforma: declarar dentro da classe principal do springboot
+
+```java
+public class SpringPrimeirosPassosApplication{
+	public static void public static void main(String[] args) {
+		SpringApplication.run(SpringPrimeirosPassosApplication.class, args);
+
+		@Bean
+		public Gson gson(){
+			return new Gson();
+		}
+	}
+}
+```
+</li>
+<li>2ªforma: se for necessário a criação de vários Beans então convem criar uma classe Beans ou BeanFactory e colocá-los dentro dessa classe. Atenção pois em algumas versões do Spring pede que essa classe seja anotada com a annotation '@Configuration':
+
+```java
+@Configuration
+public class BeanFactory{
+	@Bean
+	public Gson gson(){
+		return new Gson();
+	}
+}
+```
+
+</li>
+</p>
+
 <h2>Scopes - Singleton ou Prototype</h2>
 <h2>Properties Values</h2>
 <h2>Configuration Properties</h2>
