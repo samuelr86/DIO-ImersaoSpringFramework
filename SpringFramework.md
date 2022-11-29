@@ -396,12 +396,14 @@ public class Remetente{
 
 <li>Mapeamentos
 	<p> Vamos conhecer os aspectos de mapeamento do JPA: 
-		<li>identificação</li>
-		<li>definição</li>
-		<li>relacionamento</li>
-		<li>herança</li>
-		<li>persistência</li>
-		Abaixo exemplo de anotações de persistência:
+		<ul>
+			<li>identificação</li>
+			<li>definição</li>
+			<li>relacionamento</li>
+			<li>herança</li>
+			<li>persistência</li>
+		</ul>
+	Abaixo exemplo de anotações de persistência:
 	</p>
 </li>
 
