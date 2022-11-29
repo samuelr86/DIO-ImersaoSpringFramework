@@ -235,7 +235,7 @@ public class BeanFactory{
 
 <h3>Quantos irei precisar?</h3>
 
-<p>Singleton: um unico objeto sendo utilizado a cada necessidade da minha aplicação.</p>
+<p><b>Singleton</b>: um unico objeto sendo utilizado a cada necessidade da minha aplicação.</p>
 
 
 ```java
@@ -247,7 +247,7 @@ public class Beans{
 	}
 }
 ```
-<p>Prototype: a cada necessidade terei uma instancia correspondente a essa necessidade. Fazemos a alteração colocando a annotation "Scope". Dessa for a cada iteração cria um objeto Remetente novo.</p>
+<p><b>Prototype</b>: a cada necessidade terei uma instancia correspondente a essa necessidade. Fazemos a alteração colocando a annotation "Scope". Dessa forma a cada iteração cria um objeto Remetente novo.</p>
 
 
 ```java
@@ -383,6 +383,56 @@ public class Remetente{
 </p>
 
 <h2>Conceito ORM e JPA</h2>
+
+<h3>Java Persistance API</h3>
+
+<li>O que é ORM?
+	<p>Object-Relational Mapping, mapeamento de objeto relacional, é um recurso para aproximar o paradigma da orientação a objetos ao contexto de banco de dados relacional. O uso de ORM é realizado através do mapeamento de objeto para uma tabela por uma biblioteca ou framework. </p>
+</li>
+
+<li>Java Persistance API
+	<p>JPA é uma especificação baseada em interfaces. que através de um framework realiza operações de persistência de objetos em Java. Framework mais conhecidos são o Hibernate, eclipselink, oraclelink e o openJPA. </p>
+</li>
+
+<li>Mapeamentos
+	<p> Vamos conhecer os aspectos de mapeamento do JPA: 
+		<li>identificação</li>
+		<li>definição</li>
+		<li>relacionamento</li>
+		<li>herança</li>
+		<li>persistência</li>
+		Abaixo exemplo de anotações de persistência:
+	</p>
+</li>
+
+```java
+@Entity // que essa classe é uma entidade 
+@Table(name="tb_usuario") // indica o nome da tabela no Banco de Dados(BD)
+public class Usuario{
+
+	@Id // indica que essa será a chave primária
+	@GeneratedValue(strategy=GenerationType.AUTO) // essa chave será gerada de forma automática
+	@Column(name="id_usuario") // o nome da coluna do id no BD, diferente do nome do atributo
+	private Long id;
+
+	private String nome; // o nome da coluna no BD é igual ao atributo
+
+	@Column(name="login_usuario") // nome da coluna do login no BD
+	private String login;
+
+	@Column(name="senha_usuario") // nome da coluna da senha no BD
+	private String senha;
+}
+```
+
+<li>EntityManager
+	<p>
+		Para que possamos interagir com essas entidades e ter sincronização com o banco de dados, existe uma cadeia de camadas que o JPA disponibiliza através do JDBC. Uma dessas camadas tem uma estrutura de conection que cria a estrutura de implementação até chegar no EntityManager, que é capaz de realizar todas as operações de CRUD, incluindo seleções dos registros, e baseadas em interface o framework consegue ter o domínio de injetar as devidas implementações utilizando EntityManager.
+	</p>
+</li>
+
+
+
 <h2>Spring Data JPA</h2>
 <h2>Conexão com Postgres</h2>
 <h2>JPA Repository</h2>
