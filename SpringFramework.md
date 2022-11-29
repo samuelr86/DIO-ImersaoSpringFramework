@@ -232,8 +232,156 @@ public class BeanFactory{
 </p>
 
 <h2>Scopes - Singleton ou Prototype</h2>
+
+<h3>Quantos irei precisar?</h3>
+
+<p>Singleton: um unico objeto sendo utilizado a cada necessidade da minha aplicação.</p>
+
+
+```java
+@Configuration
+public class Beans{
+	@Bean
+	public Remetente remetente(){
+		System.out.println("CRIANDO UM OBJETO REMETENTE");
+	}
+}
+```
+<p>Prototype: a cada necessidade terei uma instancia correspondente a essa necessidade. Fazemos a alteração colocando a annotation "Scope". Dessa for a cada iteração cria um objeto Remetente novo.</p>
+
+
+```java
+@Configuration
+
+public class Beans{
+	@Bean
+	@Scope("prototype")
+	public Remetente remetente(){
+		System.out.println("CRIANDO UM OBJETO REMETENTE");
+	}
+}
+```
+
 <h2>Properties Values</h2>
+
+<p>Tenho esse sistema de mensagens que envia mensagens de aprovação de cadastro.
+
+```java
+@Component
+public class SistemaMensagem implements CommandLineRunner{
+	private String nome;
+	private String email;
+	private List<Long> telefones;
+
+	@Override
+	public void run(String... args) throws Exception{
+		System.out.println("Mensagem enviada por: " + nome );
+		System.out.println("Seu cadastro foi aprovado");
+	}
+}
+
+```
+
+Podemos colocar essa informações dentro do "application.properties". 
+
+```json
+nome=Jose da Silva
+email=joseSilva@xpto.com
+telefones=1165439846,1165489462
+```
+
+E como obter essas informações de forma interativa? Simplesmente sobre cada atributo colocamos a annotation "@Value" acompanhada de uma "expression language"...
+
+
+```java
+@Component
+public class SistemaMensagem implements CommandLineRunner{
+	@Value("${nome}")
+	private String nome;
+	@Value("${email}")
+	private String email;
+	@Value("${telefones}")
+	private List<Long> telefones;
+
+	@Override
+	public void run(String... args) throws Exception{
+		System.out.println("Mensagem enviada por: " + nome + email + telefones);
+		System.out.println("Seu cadastro foi aprovado");
+	}
+}
+
+```
+... e aí ele busca no application.properties os valores a serem exibidos.
+
+
+Caso necessite de um valor padrão ou caso o spring não ache o valor declarado no properties, podemos declará-lo diretamente no EL.
+
+```java
+@Value("${nome:João da Silva}")
+	private String nome;
+```
+
+</p>
+
 <h2>Configuration Properties</h2>
+
+<h3>@ConfigurationProperties(prefix)</h3>
+<p>A proposta é que tenho um Bean de configuração que todos os seus valores vem do application.properties. 
+
+```json
+remetente.nome=Jose da Silva
+remetente.email=joseSilva@xpto.com
+remetente.telefones=1165439846,1165489462
+```
+
+Quando tiver a necessidade que alguns atributos estiverem associados a um contexto, ao invés de explicitar através do @Value, porque nao centralizar essa configuração em um outro Bean? Crio uma classe Remetente(com a annotation @Configuration, pois é uma classe de configuração) e transfiro os atributos de SistemaMensagem para esta classe...
+
+```java
+@Configuration
+public class Remetente{
+
+	private String nome;
+	private String email;
+	private List<Long> telefones;
+
+	// getters and setters
+}
+```
+
+... e declaro o remetente dentro do SistemaMensagem
+
+```java
+@Component
+public class SistemaMensagem implements CommandLineRunner{
+	
+	@Autowired
+	private Remetente remetente;
+
+	@Override
+	public void run(String... args) throws Exception{
+		System.out.println("Mensagem enviada por: " + nome + email + telefones);
+		System.out.println("Seu cadastro foi aprovado");
+	}
+}
+
+```
+
+... para que anoto Remetente também como "@ConfigurationProperties" e como parâmetro buscar os dados que tem como prefixo "remetente".
+```java
+@Configuration]
+@ConfigurationProperties(prefix = "remetente")
+public class Remetente{
+
+	private String nome;
+	private String email;
+	private List<Long> telefones;
+
+	// getters and setters 
+}
+```
+
+</p>
+
 <h2>Conceito ORM e JPA</h2>
 <h2>Spring Data JPA</h2>
 <h2>Conexão com Postgres</h2>
