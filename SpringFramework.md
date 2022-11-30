@@ -536,6 +536,7 @@ public class StartApp implements CommandLineRunner{
     for (User u : repository.findAll()) {
             System.out.println(u);
 		}
+	}
 }
 ```
 
@@ -575,3 +576,44 @@ spring.datasource.password=senha
 
 
 <h2>JPA Repository</h2>
+
+<p>O projeto Spring Data JPA facilita a implementação do padrão Repository através de AOP(Programação Orientada a Aspecto). Uitilizando-se apenas de uma interface, o Spring irá gerar dinamicamente a implementação dos métodos de acesso a dados. Estender a interface JpaRepository é opcional, mas a vantagem é que ela já vem com vários métodos genéricos de CRUD e você não precisa redefinir todos eles.</p>
+<p>O repositório seria apenas uma classe para buscar informações no banco de dados ou no local onde as informações foram persistidas. Mas no caso JpaRepository ele provê a ligação determinada classe do Model com possibilidade de persistir no banco de dados.</p>
+<p>Os principais métodos que já são disponibilizados pelo framework
+<ul>
+	<li>save: insere e atualiza os dados de um entidade</li>
+	<li>findById: retorna o objeto localizado pelo seu Id</li>
+	<li>existsById: verifica a existência de um objeto pelo Id informado, retornando um boolean</li>
+	<li>findAll: retorna uma coleção contendo todos os registros da tabela no banco de dados</li>
+	<li>delete: deleta um registro da respectiva tabela mapeada no banco de dados</li>
+	<li>count: retorna a quantidade de registros de uma tabela mapeada no banco de dados</li>
+</ul>
+</p>
+<h3>Consultas Customizadas</h3>
+<p>Existem duas maneiras de realizar consultas customizadas, uma é conhecida como <em>QueryMethod</em> e a outra é <em>QueryOverride</em></p>
+<h4>Query Method</h4>
+<p>O Spring Data JPA se encarrega de interpretar a assinatura de um método (nomem + parâmetro) para montar a JPQL correspondente.</p>
+
+```java
+public interface UserRepository extends JpaRepository<User, Integer>{
+
+  //Query Method retorna um usuário pelo campo username
+  User findByUsername(String username);
+
+  //Query Method retorna a lista de usuário contendo parte do nome
+  List<User> findByNameContaining(String name);
+}
+```
+<h4>Query Override</h4>
+<p>Vamos imaginar que precise montar uma query um tanto avançada mas ficaria inviável utilizar o padrão QueryMethod. Como nossos repositórios são interfaces não temos implementação de código, é aí que precisa definir a consulta de forma manual através da anotação @Query.</p>
+<p>Os dois métodos realizm a mesma instrução SQL consultando os usuários pelo seu campo "name" comparando com o operador "LIKE" do SQL.
+
+```java
+public interface UserRepository extends JpaRepository<User, Integer>{
+
+  // Query Override retorna a lista de usuários contendo a parte do nome
+  @Query("SELECT u FROM User u WHERE u.name LIKE %:name%")
+	List<User> filtrarPorNome(@Param("nome") String name);
+}
+```
+</p>
