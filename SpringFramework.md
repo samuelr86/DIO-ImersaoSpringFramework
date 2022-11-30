@@ -284,7 +284,7 @@ public class SistemaMensagem implements CommandLineRunner{
 
 Podemos colocar essa informações dentro do "application.properties". 
 
-```json
+```xml
 nome=Jose da Silva
 email=joseSilva@xpto.com
 telefones=1165439846,1165489462
@@ -328,7 +328,7 @@ Caso necessite de um valor padrão ou caso o spring não ache o valor declarado 
 <h3>@ConfigurationProperties(prefix)</h3>
 <p>A proposta é que tenho um Bean de configuração que todos os seus valores vem do application.properties. 
 
-```json
+```xml
 remetente.nome=Jose da Silva
 remetente.email=joseSilva@xpto.com
 remetente.telefones=1165439846,1165489462
@@ -543,4 +543,35 @@ public class StartApp implements CommandLineRunner{
 
 
 <h2>Conexão com Postgres</h2>
+
+<p>Em um projeto Spring Boot toda a parte de configuração fica centralizada no arquivo application.properties, inclusive a configuração do banco de dados. Vamos demonstrar uma configuração para acessar o banco de dados PostgreSQL, mas serve para todos os banco de dados relacionais.
+
+```xml
+#Opcional
+spring.jpa.show-sql=true
+spring.jpa.hibernate.ddl-auto=update
+
+#Obrigatório de acordo como Banco de Dados
+spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
+spring.datasource.dirverClassName=org.postgresql.Driver
+spring.datasource.url=jdbc:postgresql://localhost:5432/nome_bancoDeDados
+spring.datasource.username=nome_usuario
+spring.datasource.password=senha
+```
+
+É necessário adicionar a dependência do banco no pom.xml
+
+```xml
+<!-- POSTGRES-->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+```
+
+
+</p>
+
+
 <h2>JPA Repository</h2>
