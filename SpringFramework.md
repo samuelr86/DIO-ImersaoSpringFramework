@@ -386,6 +386,7 @@ public class Remetente{
 
 <h3>Java Persistance API</h3>
 
+	
 <li>O que é ORM?
 	<p>Object-Relational Mapping, mapeamento de objeto relacional, é um recurso para aproximar o paradigma da orientação a objetos ao contexto de banco de dados relacional. O uso de ORM é realizado através do mapeamento de objeto para uma tabela por uma biblioteca ou framework. </p>
 </li>
@@ -433,8 +434,113 @@ public class Usuario{
 	</p>
 </li>
 
-
-
 <h2>Spring Data JPA</h2>
+<p>O Spring Data JPA adiciona uma camada sobre o JPA. Isso significa que ele usa todos os recursos definidos pela especificação  JPA, especialmente os mapeamentos de entidade e os recursos de persistência baseado em interfaces e anotações. Por isso, o Spring Data JPA adiciona seus próprios recursos como uma implementação se código do padrão de repositório e a criação de consultas de banco de dados a partir de nomes de métodos.</p>
+
+<p>A partir de agora nossa interação com o banco de dados será através de herança de interfaces e declaração de métodos com anotações.</p>
+<p>Existem algumas interfaces e anotações que são relevantes de se explorar:<br>
+<b>Interfaces</b>
+<ul>
+	<li>CrudRepository</li>
+	<li>JPARepository</li>
+	<li>PagingAndSortingRepository</li>
+</ul>
+<b>Anotações</b>
+<ul>
+	<li>@Query</li>
+	<li>@Param</li>
+</ul>
+</p>
+<p>Para a criação de um novo projeto depois de adicionados os dados, dessa vez adicionaremos os starters: Spring Data JPA e o banco de dados H2, que funciona em memória e não precisa de tantas configurações.</p>
+
+<h3>Projeto Maven - Spring Data JPA</h3>
+<p>Criaremos uma classe usuário com os atributos nome, username e password e geramos getters e setters...
+
+```java
+public class User{
+	private String name;
+	private String username;
+	private String password;
+
+	// getters e setters 
+}
+```
+... como é uma entidade anotamos a classe como "@Entity". Para o banco de dados precisamos de uma chave primária para isso criaremos um novo atributo do tipo Integer chamado id, e faremos as seguinte anotaçoes...
+
+```java
+@Entity
+public class User {
+
+    @Id 
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
+    private Integer id;
+}
+```
+...e para os demais atributos faremos as configurações das colunas com um tamanho maximo de caracteres e não permitir nulo...
+
+```java
+@Entity
+public class User {
+
+    @Id 
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
+    private Integer id;
+    @Column(length = 50, nullable = false)
+    private String name;
+    @Column(length = 20, nullable = false)
+    private String username;
+    @Column(length = 100, nullable = false)
+    private String password;
+}
+```
+</p>
+<p>Criar um pacote repository e criar uma interface UserRepository que extende de JPA Repository que recebe a entidade e o tipo da chave primária...
+
+```java
+public interface UserRepository extends JpaRepository<User, Integer>{
+
+}
+```
+...a partir desse momento podemos ter acesso a inúmeros métodos da JpaRepository. Agora precisamos inicializar nossa aplicação e para isso criaremos uma classe que implemente o CommandLineRunner e essa classe passa a ser um componente...
+
+```java
+@Component
+public class StartApp implements CommandLineRunner{
+
+	@Override
+	public void run(String... args){
+
+	}
+}
+```
+...e dentro dessa classe podemos injetar o UserRepository e criar um usuário dentro do método run...
+
+```java
+@Component
+public class StartApp implements CommandLineRunner{
+
+	@Autowired
+	private UserRepository repository;
+
+	@Override
+	public void run(String... args){
+		User user = new User();
+		user.setName("Samuel");
+		user.setUsername("samuelr");
+    user.setPassword("abc12345");
+
+    repository.save(user);
+
+    for (User u : repository.findAll()) {
+            System.out.println(u);
+		}
+}
+```
+
+... e rodar o programa.</p>
+
+
 <h2>Conexão com Postgres</h2>
 <h2>JPA Repository</h2>
